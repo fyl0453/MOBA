@@ -20,7 +20,8 @@ jobs:
       - name: Activate Unity License
         uses: game-ci/unity-activation@v3
         with:
-          license: ${{ secrets.UNITY_LICENSE }}
+          username: ${{ secrets.UNITY_USERNAME }}
+          password: ${{ secrets.UNITY_PASSWORD }}
           
       - name: Build Android
         uses: game-ci/unity-builder@v3
