@@ -7,26 +7,28 @@ workflows:
       vars:
         UNITY_VERSION: "2022.3.0f1"
         UNITY_LICENSE: Encrypted(YOUR_ENCRYPTED_LICENSE)
-      unity:
-        version: $UNITY_VERSION
+        UNITY_PROJECT_PATH: "HeroesOfWar"
     scripts:
+      - name: List files
+        script: |
+          ls -la
       - name: Activate Unity License
         script: |
-          cd HeroesOfWar
           unity-editor \
             -quit \
             -batchmode \
-            -serial $UNITY_LICENSE \
+            -serial "$UNITY_LICENSE" \
             -logFile /dev/stdout
+        working_directory: $UNITY_PROJECT_PATH
       - name: Build Android APK
         script: |
-          cd HeroesOfWar
           unity-editor \
             -quit \
             -batchmode \
             -projectPath . \
             -executeMethod BuildScript.BuildAndroid \
             -logFile /dev/stdout
+        working_directory: $UNITY_PROJECT_PATH
     artifacts:
       - HeroesOfWar/build/android/*.apk
       - HeroesOfWar/build/android/*.aab
