@@ -1,0 +1,32 @@
+workflows:
+  unity-android-build:
+    name: Unity Android Build
+    max_build_duration: 120
+    instance_type: mac_pro
+    environment:
+      vars:
+        UNITY_VERSION: "2022.3.0f1"
+        UNITY_LICENSE: Encrypted(YOUR_ENCRYPTED_LICENSE)
+      unity:
+        version: $UNITY_VERSION
+    scripts:
+      - name: Activate Unity License
+        script: |
+          cd HeroesOfWar
+          unity-editor \
+            -quit \
+            -batchmode \
+            -serial $UNITY_LICENSE \
+            -logFile /dev/stdout
+      - name: Build Android APK
+        script: |
+          cd HeroesOfWar
+          unity-editor \
+            -quit \
+            -batchmode \
+            -projectPath . \
+            -executeMethod BuildScript.BuildAndroid \
+            -logFile /dev/stdout
+    artifacts:
+      - HeroesOfWar/build/android/*.apk
+      - HeroesOfWar/build/android/*.aab
