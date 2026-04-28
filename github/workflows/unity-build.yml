@@ -1,0 +1,36 @@
+name: Unity Build
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-android:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Unity
+        uses: game-ci/unity-setup@v3
+        with:
+          unityVersion: 2022.3.0f1
+
+      - name: Activate Unity License
+        uses: game-ci/unity-activation@v3
+        with:
+          username: ${{ secrets.UNITY_USERNAME }}
+          password: ${{ secrets.UNITY_PASSWORD }}
+
+      - name: Build Android
+        uses: game-ci/unity-builder@v3
+        with:
+          targetPlatform: Android
+          projectPath: HeroesOfWar
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: android-apk
+          path: build/Android/*.apk
