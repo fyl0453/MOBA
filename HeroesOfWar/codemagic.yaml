@@ -1,0 +1,163 @@
+workflows:
+  unity-android-build:
+    name: Unity Android Build
+    max_build_duration: 120
+    instance_type: mac_pro
+    environment:
+      vars:
+        UNITY_VERSION: "2022.3.0f1"
+        UNITY_LICENSE: Encrypted(YOUR_ENCRYPTED_LICENSE)
+      unity:
+        version: $UNITY_VERSION
+    scripts:
+      - name: Activate Unity License
+        script: |
+          unity-editor \
+            -quit \
+            -batchmode \
+            -serial $UNITY_LICENSE \
+            -logFile /dev/stdout
+      - name: Build Android APK
+        script: |
+          unity-editor \
+            -quit \
+            -batchmode \
+            -projectPath . \
+            -executeMethod BuildScript.BuildAndroid \
+            -logFile /dev/stdout
+    artifacts:
+      - build/android/*.apk
+      - build/android/*.aab
+
+  unity-ios-build:
+    name: Unity iOS Build
+    max_build_duration: 120
+    instance_type: mac_pro
+    environment:
+      vars:
+        UNITY_VERSION: "2022.3.0f1"
+        UNITY_LICENSE: Encrypted(YOUR_ENCRYPTED_LICENSE)
+        APP_STORE_CONNECT_ISSUER_ID: Encrypted(YOUR_ENCRYPTED_ISSUER_ID)
+        APP_STORE_CONNECT_KEY_IDENTIFIER: Encrypted(YOUR_ENCRYPTED_KEY_ID)
+        APP_STORE_CONNECT_PRIVATE_KEY: Encrypted(YOUR_ENCRYPTED_PRIVATE_KEY)
+        BUNDLE_ID: "com.heroesofwar.moba"
+      unity:
+        version: $UNITY_VERSION
+      xcode:
+        version: 14.2
+    scripts:
+      - name: Activate Unity License
+        script: |
+          unity-editor \
+            -quit \
+            -batchmode \
+            -serial $UNITY_LICENSE \
+            -logFile /dev/stdout
+      - name: Build iOS Xcode project
+        script: |
+          unity-editor \
+            -quit \
+            -batchmode \
+            -projectPath . \
+            -executeMethod BuildScript.BuildiOS \
+            -logFile /dev/stdout
+      - name: Archive and export IPA
+        script: |
+          cd build/ios
+          xcodebuild archive \
+            -scheme HeroesOfWar \
+            -archivePath HeroesOfWar.xcarchive \
+            -destination generic/platform=iOS
+          xcodebuild -exportArchive \
+            -archivePath HeroesOfWar.xcarchive \
+            -exportPath . \
+            -exportOptionsPlist exportOptions.plist
+    artifacts:
+      - build/ios/*.ipa
+
+  unity-windows-build:
+    name: Unity Windows Build
+    max_build_duration: 120
+    instance_type: windows_x2
+    environment:
+      vars:
+        UNITY_VERSION: "2022.3.0f1"
+        UNITY_LICENSE: Encrypted(YOUR_ENCRYPTED_LICENSE)
+      unity:
+        version: $UNITY_VERSION
+    scripts:
+      - name: Activate Unity License
+        script: |
+          unity-editor \
+            -quit \
+            -batchmode \
+            -serial $UNITY_LICENSE \
+            -logFile stdout.log
+      - name: Build Windows EXE
+        script: |
+          unity-editor \
+            -quit \
+            -batchmode \
+            -projectPath . \
+            -executeMethod BuildScript.BuildWindows \
+            -logFile stdout.log
+    artifacts:
+      - build/windows/*.exe
+
+  unity-macos-build:
+    name: Unity macOS Build
+    max_build_duration: 120
+    instance_type: mac_pro
+    environment:
+      vars:
+        UNITY_VERSION: "2022.3.0f1"
+        UNITY_LICENSE: Encrypted(YOUR_ENCRYPTED_LICENSE)
+      unity:
+        version: $UNITY_VERSION
+    scripts:
+      - name: Activate Unity License
+        script: |
+          unity-editor \
+            -quit \
+            -batchmode \
+            -serial $UNITY_LICENSE \
+            -logFile /dev/stdout
+      - name: Build macOS App
+        script: |
+          unity-editor \
+            -quit \
+            -batchmode \
+            -projectPath . \
+            -executeMethod BuildScript.BuildMacOS \
+            -logFile /dev/stdout
+    artifacts:
+      - build/macos/*.app
+
+  unity-webgl-build:
+    name: Unity WebGL Build
+    max_build_duration: 120
+    instance_type: mac_pro
+    environment:
+      vars:
+        UNITY_VERSION: "2022.3.0f1"
+        UNITY_LICENSE: Encrypted(YOUR_ENCRYPTED_LICENSE)
+      unity:
+        version: $UNITY_VERSION
+    scripts:
+      - name: Activate Unity License
+        script: |
+          unity-editor \
+            -quit \
+            -batchmode \
+            -serial $UNITY_LICENSE \
+            -logFile /dev/stdout
+      - name: Build WebGL
+        script: |
+          unity-editor \
+            -quit \
+            -batchmode \
+            -projectPath . \
+            -executeMethod BuildScript.BuildWebGL \
+            -logFile /dev/stdout
+    artifacts:
+      - build/webgl/**/*
