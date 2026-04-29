@@ -12,11 +12,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Request Unity Activation File
+        uses: game-ci/unity-request-activation-file@v2
+        id: getLicenseFile
+
+      - name: Upload Activation File
+        uses: actions/upload-artifact@v4
+        with:
+          name: unity-activation-file
+          path: ${{ steps.getLicenseFile.outputs.activationFile }}
+
+      - name: Activate Unity License
+        uses: game-ci/unity-activate@v2
+        with:
+          username: ${{ secrets.UNITY_USERNAME }}
+          password: ${{ secrets.UNITY_PASSWORD }}
+          licenseFile: ${{ steps.getLicenseFile.outputs.activationFile }}
+
       - name: Build Android
         uses: game-ci/unity-builder@v4
-        env:
-          UNITY_EMAIL: ${{ secrets.UNITY_USERNAME }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           targetPlatform: Android
           projectPath: HeroesOfWar
