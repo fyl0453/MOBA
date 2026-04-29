@@ -10,27 +10,27 @@ jobs:
     name: Build Android APK
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Unity
-        uses: game-ci/unity-setup@v3
+        uses: game-ci/unity-setup@v4
         with:
           unityVersion: 2022.3.0f1
 
       - name: Activate Unity License
-        uses: game-ci/unity-activation@v3
+        uses: game-ci/unity-activate@v4
         with:
           username: ${{ secrets.UNITY_USERNAME }}
           password: ${{ secrets.UNITY_PASSWORD }}
 
       - name: Build Android
-        uses: game-ci/unity-builder@v3
+        uses: game-ci/unity-builder@v4
         with:
           targetPlatform: Android
           projectPath: HeroesOfWar
 
       - name: Upload APK
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: android-apk
           path: build/Android/*.apk
