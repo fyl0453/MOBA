@@ -12,17 +12,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Request Unity Activation File
+      - name: Request Activation File
         uses: game-ci/unity-request-activation-file@v2
         id: getLicenseFile
 
-      - name: Upload Activation File
-        uses: actions/upload-artifact@v4
-        with:
-          name: unity-activation-file
-          path: ${{ steps.getLicenseFile.outputs.activationFile }}
-
-      - name: Activate Unity License
+      - name: Activate License
         uses: game-ci/unity-activate@v2
         with:
           username: ${{ secrets.UNITY_USERNAME }}
